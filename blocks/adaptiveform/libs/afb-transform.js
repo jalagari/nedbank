@@ -5,7 +5,7 @@ import Formula from './json-formula.js';
 
 const PROPERTY = 'property';
 const PROPERTY_RULES = 'rules.properties';
-
+const SHEET_REGEX = /('.{1,31}'|[\w.]{1,31}?)!([$]?[a-z]+[$]?([0-9]+))/g;
 /**
  * @param {string} formPath
  */
@@ -36,8 +36,6 @@ export default class ExcelToFormModel {
   rowNumberFieldMap = new Map();
 
   panelMap = new Map();
-
-  interpreter = new ExcelToJsonFormula(this.rowNumberFieldMap);
 
   errors = [];
 
@@ -121,20 +119,24 @@ export default class ExcelToFormModel {
 
     const entries = await Promise.all(exData.data.filter((item) => item.fieldType === 'fragment' && item.name).map(async (item) => {
       const transformer = new ExcelToFormModel();
-      const url = `${formPath}?sheet=${item.name}`;
+      const name = item.name.replace(/^helix-/, '');
+      const url = `${formPath}?sheet=${name}`;
       const fragmentJson = await transformer.getFormModel(url);
-      return [item.name, fragmentJson.formDef];
+      return [item.name, {
+        form: fragmentJson.formDef,
+        rowNumberFieldMap: transformer.rowNumberFieldMap,
+      }];
     }));
 
-    const fragments = Object.fromEntries(entries);
+    this.fragments = Object.fromEntries(entries);
 
     exData.data.forEach(async (/** @type {{ [s: string]: any; } | ArrayLike<any>} */ item) => {
       // eslint-disable-next-line no-unused-vars
       const source = Object.fromEntries(Object.entries(item).filter(([_, v]) => (v != null && v !== '')));
       let field = { ...source, ...this.#initField() };
       if (field.fieldType === 'fragment' && field.name) {
-        const fragmentJson = fragments[field.name];
-        fragmentJson.items.forEach((fragmentItem) => {
+        const transformed = this.fragments[field.name];
+        transformed.form.items.forEach((fragmentItem) => {
           this.#addToParent(fragmentItem);
         });
       } else if (item.name || item.Field) {
@@ -310,14 +312,25 @@ export default class ExcelToFormModel {
      * @param {*} fields
      */
   #transformExcelForumulaToRule(fields, validate) {
+    const interpreter = new ExcelToJsonFormula(this.rowNumberFieldMap, undefined, this.fragments);
+
     fields?.forEach((field) => {
       const valueRule = field?.rules?.value;
       if (valueRule && valueRule.charAt(0) === '=') {
         try {
-          const excelExpression = valueRule?.slice(1)?.replaceAll('"', "'")?.toLowerCase(); // better way to handle double to single quotes
+          // better way to handle double to single quotes
+          const excelExpression = valueRule?.slice(1)?.replaceAll('"', "'")?.toLowerCase();
+          // replace sheet name to make proper json formula expression
+          const updateRule = excelExpression.replace(SHEET_REGEX, (match, g1, g2, g3) => {
+            if (g1.startsWith("'")) {
+              return `"${g1.replace(/'/g, '')}_${g3}"`;
+            }
+            return `${g1}_${g3}`;
+          });
+          console.log(updateRule);
           let formula = new Formula();
-          const ast = formula.compile(excelExpression);
-          const jsonExpression = this.interpreter.transform(ast);
+          const ast = formula.compile(updateRule);
+          const jsonExpression = interpreter.transform(ast);
           if (validate) {
             formula = new Formula();
             formula.search(jsonExpression, {});

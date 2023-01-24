@@ -7,11 +7,12 @@ const TOK_NE = 'NE';
 
 // eslint-disable-next-line import/prefer-default-export
 export class ExcelToJsonFormula {
-  numberRegEx = /\d+/;
+  numberRegEx = /(.+?)_(\d+)$|[^_]+?(\d+)$/;
 
-  constructor(rowNumberFieldMap, globals) {
+  constructor(rowNumberFieldMap, globals, fragments) {
     this.rowNumberFieldMap = rowNumberFieldMap;
     this.globals = globals;
+    this.fragments = fragments;
   }
 
   transform(node, value) {
@@ -24,8 +25,13 @@ export class ExcelToJsonFormula {
       Field: (node) => {
         const name = node?.name;
         const match = this.numberRegEx.exec(name);
-        const rowNo = match?.[0];
-        const field = this.rowNumberFieldMap?.get(rowNo * 1);
+        let field;
+        if (match?.[1] && match?.[2]) {
+          field = this.fragments[match[1]].rowNumberFieldMap.get(match[2] * 1);
+        } else if (match?.[3]) {
+          const rowNo = match?.[3];
+          field = this.rowNumberFieldMap?.get(rowNo * 1);
+        }
         if (!field) throw new Error(`Unknown column used in excel formula ${node.name}`);
         return field?.name;
       },
