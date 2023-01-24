@@ -119,11 +119,25 @@ export default class ExcelToFormModel {
     const transformRules = [];
     let rowNo = 2;
 
+    const entries = await Promise.all(exData.data.filter((item) => item.fieldType === 'fragment' && item.name).map(async (item) => {
+      const transformer = new ExcelToFormModel();
+      const url = `${formPath}?sheet=${item.name}`;
+      const fragmentJson = await transformer.getFormModel(url);
+      return [item.name, fragmentJson.formDef];
+    }));
+
+    const fragments = Object.fromEntries(entries);
+
     exData.data.forEach(async (/** @type {{ [s: string]: any; } | ArrayLike<any>} */ item) => {
       // eslint-disable-next-line no-unused-vars
       const source = Object.fromEntries(Object.entries(item).filter(([_, v]) => (v != null && v !== '')));
       let field = { ...source, ...this.#initField() };
-      if (item.name || item.Field) {
+      if (field.fieldType === 'fragment' && field.name) {
+        const fragmentJson = fragments[field.name];
+        fragmentJson.items.forEach((fragmentItem) => {
+          this.#addToParent(fragmentItem);
+        });
+      } else if (item.name || item.Field) {
         this.#transformFieldNames(field);
 
         if (this.#isProperty(field)) {
