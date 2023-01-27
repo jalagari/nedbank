@@ -58,8 +58,8 @@ export class Range extends DefaultField {
 
   renderInput(state, bemBlock) {
     const input = builder?.default?.defaultInputRender(state, bemBlock);
-    input.value = state.value;
     input.step = state.step;
+    input.value = state.value;
     const div = document.createElement('div');
     div.className = `${bemBlock}__widget-wrapper`;
 
