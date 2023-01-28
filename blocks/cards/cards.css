@@ -691,8 +691,9 @@
   width: 285px;
   font-weight: bold;
 }
-.home-help.cards-container > .default-content-wrapper:nth-last-child(2) h3 {
-  color: #fff;
+
+.home-help.cards-container > .default-content-wrapper > h3 {
+  color: #fff
 }
 
 .home-help.cards-container > .default-content-wrapper:nth-last-child(2) > p:first-of-type {
@@ -705,9 +706,6 @@
     grid-template-columns: 1fr 1fr 0.25fr 1fr;
     grid-template-areas: "a a a a"
     "b b . d"
-  }
-    .home-help.cards-container h3 {
-    color: #fff
   }
   /**
    * Somehow an empty div is being generated in the last
