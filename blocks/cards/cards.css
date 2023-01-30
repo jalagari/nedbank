@@ -671,11 +671,11 @@
     justify-content: space-evenly;
   }
 }
-.home-help.cards-container > .default-content-wrapper:nth-last-child(2) {
+.home-help.cards-container .cards-wrapper + div {
   color: #fff;
   text-align: center;
 }
-.home-help.cards-container > .default-content-wrapper:nth-last-child(2) .button-container a {
+.home-help.cards-container .cards-wrapper + div .button-container a {
   padding: 16px 0 16px 0;
   font-size: 16px;
   margin: 0;
@@ -696,7 +696,7 @@
   color: #fff
 }
 
-.home-help.cards-container > .default-content-wrapper:nth-last-child(2) > p:first-of-type {
+.home-help.cards-container .cards-wrapper + div > p:first-of-type {
   margin: 0 114px 40px 113px;
 }
 
@@ -710,12 +710,12 @@
   /**
    * Somehow an empty div is being generated in the last
    */
-   .home-help.cards-container > .default-content-wrapper:nth-last-child(2) {
+   .home-help.cards-container .cards-wrapper + div {
     text-align: left;
     grid-area: d;
     margin-top: 49px;
   }
-  .home-help.cards-container > .default-content-wrapper:nth-last-child(2) > p:first-of-type {
+  .home-help.cards-container .cards-wrapper + div > p:first-of-type {
     margin: 0;
   }  
   .home-help.cards-container .cards-wrapper {
