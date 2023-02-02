@@ -1,12 +1,11 @@
-import { getWidget } from '../../libs/afb-interaction.js';
 import { Constants } from '../../libs/constants.js';
-import { Checkbox } from "../checkbox/checkbox.js";
+import { Checkbox } from '../checkbox/checkbox.js';
 
 export class Radio extends Checkbox {
   blockName = Constants.RADIO;
 
   updateValue = (element, value) => {
-    const widget = getWidget(element);
+    const widget = element.querySelector(`[class$='${Constants.WIDGET}']`);
     widget.checked = this.model.enum?.[0] === value;
     if (widget.checked) {
       widget.setAttribute(Constants.HTML_ATTRS.CHECKED, Constants.HTML_ATTRS.CHECKED);
@@ -20,5 +19,6 @@ export class Radio extends Checkbox {
 
 export default async function decorate(block, model) {
   const radio = new Radio(block, model);
-  return radio.render();
+  block.append(radio.render(model));
+  return block;
 }

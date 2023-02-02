@@ -1,12 +1,5 @@
 import { Constants } from './constants.js';
 
-/**
- *
- * @param {HTMLDivElement} element
- * @returns {HTMLInputElement | null}
- */
-export const getWidget = (element) => element.querySelector(`[class$='${Constants.WIDGET}']`);
-
 export const getErrorWidget = (element) => element.querySelector(`[id$='${Constants.ERROR_MESSAGE}']`);
 
 /**
@@ -39,8 +32,8 @@ export const setActive = (element, value) => {
  * @param {string} value
  */
 export const updateValue = (element, value) => {
-  const widget = getWidget(element);
-  if (widget) widget.value = value;
+  // const widget = getWidget(element);
+  // if (widget) widget.value = value;
 };
 
 /**

@@ -1,20 +1,21 @@
-import { createWidget, defaultInputRender } from '../../libs/afb-builder.js';
-import { getWidget } from '../../libs/afb-interaction.js';
+import { createFormElement } from '../../libs/afb-builder.js';
 import { Constants } from '../../libs/constants.js';
-import { DefaultField } from '../defaultInput.js';
 
-export class Output extends DefaultField {
+export class Output {
   blockName = Constants.OUTPUT;
 
-  renderField() {
-    let widget = createWidget(this.model, this.blockName);
-    let output = defaultInputRender(this.model, this.blockName, "output");
-    widget.querySelector("input").replaceWith(output);
-    return widget;
+  render(model) {
+    const element = createFormElement(model, () => {
+      const output = document.createElement('output');
+      output.value = model.value;
+      return output;
+    });
+    return element;
   }
 }
 
 export default async function decorate(block, model) {
-  const radio = new Output(block, model);
-  return radio.render();
+  const component = new Output();
+  block.append(component.render(model));
+  return block;
 }

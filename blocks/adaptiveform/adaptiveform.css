@@ -1,91 +1,91 @@
-
 .afb-form {
-    max-width: 768px;
-    margin: auto;
-    --tooltip-icon: url('/icons/tooltip.svg');
-    --adaptiveform-questionmark-background: var(--tooltip-icon);
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+  max-width: 768px;
+  margin: auto;
+  --tooltip-icon: url('/icons/tooltip.svg');
+  --adaptiveform-questionmark-background: var(--tooltip-icon);
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.afb-form  {
-    background-color: white;
-    padding: var(--spacing-m);
-    box-shadow: 0 1px 6px rgb(34 34 34 / 10%);
-  }
+.afb-form {
+  background-color: white;
+  padding: var(--spacing-m);
+  box-shadow: 0 1px 6px rgb(34 34 34 / 10%);
+}
 
-  .afb-form  output,
-  .afb-form  input,
-  .afb-form  textarea,
-  .afb-form  select {
-    border: 1px solid rgb(193 193 195);
-    padding: 11px;
-    border-radius: 0;
-    width: 100%;
-    max-width: 50rem;
-    box-sizing: border-box;
-    margin-top: 4px;
-  }
-  
-  .afb-form output {
-    border: none;
-    display: block;
-  }
+.afb-form output,
+.afb-form input,
+.afb-form textarea,
+.afb-form select {
+  border: 1px solid rgb(193 193 195);
+  padding: 11px;
+  border-radius: 0;
+  width: 100%;
+  max-width: 50rem;
+  box-sizing: border-box;
+  margin-top: 4px;
+}
 
-  .afb-form input[type="radio"], .afb-form input[type="checkbox"] {
-    width: auto;
-  }
+.afb-form output {
+  border: none;
+  display: block;
+}
 
-  .afb-form  textarea {
-    min-height: 100px;
-  }
-  
-  .afb-form  input:hover,
-  .afb-form  select:hover {
-    border-color: rgb(90 92 96);
-  }
-  
-  .afb-form  label {
-    width: 100%;
-    font-size: var(--type-body-s-size);
-    line-height: var(--type-body-s-lh);
-    padding-bottom: var(--spacing-xs);
-    box-sizing: border-box;
-    font-weight: 800;
-  }
+.afb-form input[type="radio"],
+.afb-form input[type="checkbox"] {
+  width: auto;
+}
 
-  .afb-radio label {
-    padding: 0 0 0 20px;
-  }
-  
-  .afb-form .afb-range__widget__min{
-    top: 10px;
-    position: relative;
-    font-size: 14px;
-    line-height: 22px;
-  }
+.afb-form textarea {
+  min-height: 100px;
+}
 
-  .afb-form .afb-range__widget__max{
-    top: 10px;
-    position: relative;
-    font-size: 14px;
-    line-height: 22px;
-    float: right;
-  }
+.afb-form input:hover,
+.afb-form select:hover {
+  border-color: rgb(90 92 96);
+}
 
-  .afb-form .afb__questionmark {
-    margin: unset;
-    padding: unset;
-    display: inline;
-    width: 14px;
-    height: 14px;
-    border-radius: 9px;
-    background: var(--adaptiveform-questionmark-background);
-    cursor: pointer;
-    position: absolute;
-    box-sizing: content-box;
-    align-self: flex-end;
-    background-repeat: no-repeat;
-    margin-top: 5px;
+.afb-form label {
+  width: 100%;
+  font-size: var(--type-body-s-size);
+  line-height: var(--type-body-s-lh);
+  padding-bottom: var(--spacing-xs);
+  box-sizing: border-box;
+  font-weight: 800;
+}
+
+.afb-radio label {
+  padding: 0 0 0 20px;
+}
+
+.afb-form .afb-range__widget__min {
+  top: 10px;
+  position: relative;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.afb-form .afb-range__widget__max {
+  top: 10px;
+  position: relative;
+  font-size: 14px;
+  line-height: 22px;
+  float: right;
+}
+
+.afb-form .afb__questionmark {
+  margin: unset;
+  padding: unset;
+  display: inline;
+  width: 14px;
+  height: 14px;
+  border-radius: 9px;
+  background: var(--adaptiveform-questionmark-background);
+  cursor: pointer;
+  position: absolute;
+  box-sizing: content-box;
+  align-self: flex-end;
+  background-repeat: no-repeat;
+  margin-top: 5px;
 }

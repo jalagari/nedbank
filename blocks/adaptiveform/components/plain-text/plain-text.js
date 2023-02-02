@@ -1,4 +1,4 @@
-import { createWidgetWrapper } from '../../libs/afb-builder.js';
+import { createFormElement } from '../../libs/afb-builder.js';
 import { subscribe } from '../../libs/afb-interaction.js';
 import { Constants } from '../../libs/constants.js';
 
@@ -19,7 +19,7 @@ export class PlainText {
   renderField = () => {
     const state = this.model;
 
-    const element = createWidgetWrapper(state, this.blockName);
+    const element = createFormElement(state, this.blockName);
 
     const child = document.createElement('div');
     child.className = `${this.blockName}__widget`;
@@ -32,7 +32,7 @@ export class PlainText {
   render() {
     this.element = this.renderField();
     this.block.appendChild(this.element);
-    //subscribe(this.model, this.element);
+    // subscribe(this.model, this.element);
   }
 }
 

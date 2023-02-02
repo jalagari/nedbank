@@ -1,29 +1,17 @@
-import { getWidget, setActive } from '../../libs/afb-interaction.js';
-import { DefaultField } from '../defaultInput.js';
-import { defaultInputRender, createWidget } from '../../libs/afb-builder.js';
+import { defaultInputRender, createFormElement } from '../../libs/afb-builder.js';
+import { Constants } from '../../libs/constants.js';
 
-export class Range extends DefaultField {
-  blockName = 'afb-range';
-
+export class Range {
   addListener() {
     if (this.element) {
-      const widget = getWidget(this.block);
+      const widget = this.block.querySelector(`[class$='${Constants.widget}']`);
 
       widget?.addEventListener('change', (e) => {
         const hover = this.element.querySelector(`.${this.blockName}__widget-value`);
 
         this.model.value = e.target.value;
         const state = this.model?.getState();
-        if (this.element) {
-          setActive(this.element, false);
-        }
         this.#updateView(state, hover, e.target);
-      });
-
-      widget?.addEventListener('focus', () => {
-        if (this.element) {
-          setActive(this.element, true);
-        }
       });
     }
   }
@@ -56,15 +44,15 @@ export class Range extends DefaultField {
   }
 
   format(value, state) {
-    return value === 0 ? '6 months' : `${value} ${state.displayFormat}`
+    return value === 0 ? '6 months' : `${value} ${state.displayFormat}`;
   }
 
-  renderInput = (state, bemBlock) => {
-    const input = defaultInputRender(state, bemBlock);
+  renderInput = (state) => {
+    const bemBlock = 'afb-range';
+    const input = defaultInputRender(state);
     input.step = state.step;
     input.value = state.value;
-    const div = document.createElement('div');
-    div.className = `${bemBlock}__widget-wrapper`;
+    const div = document.createDocumentFragment();
 
     const hover = document.createElement('span');
     hover.className = `${bemBlock}__widget-value`;
@@ -86,16 +74,24 @@ export class Range extends DefaultField {
       console.error(e);
       max.textContent = state.maximum;
     }
-    div.append(hover, input, min, max);
+    // div.append(input, hover, min, max);
+    div.append(input);
     return div;
+  };
+
+  renderField(model) {
+    return createFormElement(model, this.renderInput);
   }
 
-  renderField() {
-    return createWidget(this.model, this.blockName, this.renderInput);
+  render(model) {
+    const element = this.renderField(model);
+    this.addListener();
+    return element;
   }
 }
 
 export default async function decorate(block, model) {
-  const range = new Range(block, model);
-  return range.render();
+  const range = new Range();
+  block.append(range.render(model));
+  return block;
 }

@@ -1,7 +1,6 @@
 import { isArrayType } from '../../libs/afb-model.js';
-import { getWidget, subscribe } from '../../libs/afb-interaction.js';
 import { Constants } from '../../libs/constants.js';
-import { createWidget, defaultInputRender } from '../../libs/afb-builder.js';
+import { createFormElement, defaultInputRender } from '../../libs/afb-builder.js';
 
 export class Select {
   blockName = Constants.SELECT;
@@ -17,23 +16,27 @@ export class Select {
     this.model = model;
   }
 
+  getWidget() {
+    return this.element.querySelector(`[class$='${Constants.WIDGET}']`);
+  }
+
   updateValue = (element, value) => {
     const isMultiSelect = isArrayType(this.model);
     if (this.element) {
-      const select = getWidget(element);
+      const select = this.getWidget();
       for (let index = 0; index < select?.options?.length; index += 1) {
         const option = select?.options?.[index];
         option.selected = (isMultiSelect && value?.includes(option.value))
-                    || (value === option.value);
+          || (value === option.value);
       }
     }
   };
 
   addListener = () => {
-    getWidget(this.element)?.addEventListener('blur', (e) => {
+    this.getWidget()?.addEventListener('blur', (e) => {
       if (isArrayType(this.model)) {
         const valueArray = [];
-        const select = getWidget(this.element);
+        const select = this.getWidget();
         for (let index = 0; index < select?.options?.length; index += 1) {
           const option = select?.options?.[index];
           if (option.selected) {
@@ -81,10 +84,10 @@ export class Select {
   };
 
   render() {
-    this.element = createWidget(this.model, this.blockName, this.createInputHTML);
+    this.element = createFormElement(this.model, this.createInputHTML);
     this.block.appendChild(this.element);
     this.addListener();
-    //subscribe(this.model, this.element, { value: this.updateValue });
+    // subscribe(this.model, this.element, { value: this.updateValue });
   }
 }
 
