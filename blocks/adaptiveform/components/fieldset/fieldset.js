@@ -1,54 +1,44 @@
-import { createLabel, createLongDescHTML, createQuestionMarkHTML, createWidgetWrapper, renderChildren } from '../../libs/afb-builder.js';
+import {
+  appendChild,
+  createLabel, createLongDescHTML, createQuestionMarkHTML, renderChildren,
+} from '../../libs/afb-builder.js';
 import { subscribe } from '../../libs/afb-interaction.js';
 import { Constants } from '../../libs/constants.js';
 
 export class Panel {
   blockName = Constants.PANEL;
 
-  block;
-
   element;
 
-  model;
-
-  constructor(block, model) {
-    this.block = block;
-    this.model = model;
-  }
-
   renderField = (state) => {
-    const element = document.createDocumentFragment();
+    const fieldset = document.createElement('fieldset');
+    fieldset.classList.add('afb-fieldset', state.name);
+    fieldset.setAttribute('name', state.name);
+    const label = createLabel(state?.label, 'fieldset', state?.id, 'legend');
+    if (label) {
+      label.tabIndex = label.textContent ? 0 : -1;
+      fieldset.appendChild(label);
+    }
+    appendChild(fieldset, createLongDescHTML(state?.description));
+    appendChild(fieldset, createQuestionMarkHTML(state?.tooltip));
 
-    const label = createLabel(state, this.blockName);
-    label.tabIndex = label.textContent ? 0 : -1;
-
-    const longDesc = createLongDescHTML(state, this.blockName);
-    const help = createQuestionMarkHTML(state, this.blockName);
-
-    if (label) { element.appendChild(label); }
-    if (longDesc) { element.appendChild(longDesc); }
-    if (help) { element.appendChild(help); }
-
-    return element;
+    return fieldset;
   };
 
-  async render() {
-    const state = this.model;
+  async render(model) {
+    const state = model;
 
     this.element = this.renderField(state);
     await renderChildren(state?.items, this.element);
-    if (state.name || state.dataName) {
-      this.block.classList.add(state.name || state.dataName);
-    }
-    if (state?.name) {
-      this.block.setAttribute('name', state.name);
-    }
-    this.block.appendChild(this.element);
-    //subscribe(this.model, this.element);
+
+    return this.element;
+    // subscribe(this.model, this.element);
   }
 }
 
 export default async function decorate(block, model) {
-  const panel = new Panel(block, model);
-  await panel.render();
+  const panel = new Panel(model);
+  const element = await panel.render(model);
+  // element.classList.add(block.classList);
+  return element;
 }

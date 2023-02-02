@@ -1,11 +1,14 @@
 import ExcelToFormModel from './libs/afb-transform.js';
-import { getRender, renderChildren } from './libs/afb-builder.js';
+import { renderChildren } from './libs/afb-builder.js';
 import { readBlockConfig } from '../../scripts/scripts.js';
 
 export class AdaptiveForm {
   form;
+
   element;
+
   formJson;
+
   metadata;
 
   /**
@@ -22,7 +25,7 @@ export class AdaptiveForm {
     const form = document.createElement('form');
     form.className = 'afb-form';
     this.form = form;
-    
+
     await renderChildren(this.formJson?.items, this.form);
     return form;
   };
@@ -34,7 +37,7 @@ export class AdaptiveForm {
 const createFormContainer = async (block, url, metadata) => {
   const transform = new ExcelToFormModel();
   const convertedData = await transform.getFormModel(url);
-  
+
   const adaptiveform = new AdaptiveForm(block, convertedData?.formDef, metadata);
   const form = await adaptiveform.render();
   block?.replaceWith(form);

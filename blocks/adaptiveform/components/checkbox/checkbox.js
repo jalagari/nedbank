@@ -1,7 +1,5 @@
-import { getWidget, subscribe } from '../../libs/afb-interaction.js';
 import { Constants } from '../../libs/constants.js';
-import { getLabelValue } from '../../libs/afb-model.js';
-import { createLabel, createLongDescHTML, createQuestionMarkHTML, createWidget, createWidgetWrapper, defaultInputRender } from '../../libs/afb-builder.js';
+import { createFormElement } from '../../libs/afb-builder.js';
 
 export class Checkbox {
   blockName = Constants.CHECKBOX;
@@ -17,9 +15,13 @@ export class Checkbox {
     this.model = model;
   }
 
+  getWidget() {
+    return this.element.querySelector(`[class$='${Constants.WIDGET}']`);
+  }
+
   addListener() {
-    getWidget(this.element)?.addEventListener('change', () => {
-      const widget = getWidget(this.element);
+    this.getWidget().addEventListener('change', () => {
+      const widget = this.getWidget();
       if (widget?.checked) {
         this.model.value = this.model.enum?.[0] || true;
       } else {
@@ -29,28 +31,29 @@ export class Checkbox {
   }
 
   renderField = (model) => {
-    let widget = createWidget(model, this.blockName);
-    let label = widget.querySelector("label");
-    widget.append(label);
-    return widget;
+    const element = createFormElement(model);
+    const label = element.querySelector('label');
+    element.append(label);
+    return element;
   };
 
   updateValue = (element, value) => {
-    const widget = getWidget(element);
+    const widget = this.getWidget();
     if (widget) {
       widget.checked = this.model.enum?.[0] === value || value === true;
     }
   };
 
-  render() {
-    this.element = this.renderField(this.model);
-    this.block.appendChild(this.element);
+  render(model) {
+    this.element = this.renderField(model);
     this.addListener();
-    //subscribe(this.model, this.element, { value: this.updateValue });
+    // subscribe(this.model, this.element, { value: this.updateValue });
+    return this.element;
   }
 }
 
 export default async function decorate(block, model) {
   const checkbox = new Checkbox(block, model);
-  checkbox.render();
+  block.append(checkbox.render(model));
+  return block;
 }

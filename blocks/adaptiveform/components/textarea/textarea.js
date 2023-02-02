@@ -1,8 +1,7 @@
-import * as builder from '../../libs/afb-builder.js';
+import { createFormElement, defaultInputRender } from '../../libs/afb-builder.js';
 import { subscribe } from '../../libs/afb-interaction.js';
-import { DefaultField } from '../defaultInput.js';
 
-export class TextArea extends DefaultField {
+export class TextArea {
   blockName = 'cmp-adaptiveform-textinput';
 
   /**
@@ -11,16 +10,19 @@ export class TextArea extends DefaultField {
      *
      * @return {Element}
      */
-  createInputHTML = () => builder?.default?.defaultInputRender(this.model?.getState(), this.blockName, 'textarea');
+  createInputHTML = () => defaultInputRender(this.model?.getState(), 'textarea');
 
-  render() {
-    this.element = builder?.default?.renderField(this.model, this.blockName, this.createInputHTML);
-    this.block.appendChild(this.element);
+  render(model) {
+    this.element = createFormElement(model, this.createInputHTML);
     this.addListener();
     subscribe(this.model, this.element);
+    return this.element;
   }
 }
+
 export default async function decorate(block, model) {
   const textinput = new TextArea(block, model);
-  textinput.render();
+  const element = textinput.render(model);
+  block.appendChild(element);
+  return block;
 }

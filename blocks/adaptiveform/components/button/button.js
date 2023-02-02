@@ -1,8 +1,5 @@
-import { Click } from '../../libs/afb-events.js';
-import { getLabelValue, getTooltipValue, getViewId } from '../../libs/afb-model.js';
 import { subscribe } from '../../libs/afb-interaction.js';
 import { Constants } from '../../libs/constants.js';
-import { addStyle } from '../../libs/afb-builder.js';
 
 export class Button {
   blockName = Constants.BUTTON;
@@ -20,7 +17,9 @@ export class Button {
 
   addListener() {
     this.element?.addEventListener('click', () => {
-      this.model.dispatch(new Click());
+      // this.model.dispatch({
+      //   action: 'click',
+      // });
     });
   }
 
@@ -28,32 +27,31 @@ export class Button {
     const state = this.model;
     const button = document.createElement('button');
     button.type = 'button';
-    button.id = getViewId(state, this.blockName);
+    button.id = state?.id;
     button.className = this.blockName;
-    button.title = getTooltipValue(state);
+    button.title = state?.tooltip;
     button.dataset.cmpVisible = `${state?.visible === true}`;
     button.dataset.cmpEnabled = `${state?.enabled === true}`;
-    button.setAttribute('aria-label', getLabelValue(state));
-
-    addStyle(button, state);
+    button.setAttribute('aria-label', state?.label?.value ? ` ${state?.label?.value}` : '');
 
     const span = document.createElement('span');
     span.className = `${this.blockName}__text`;
-    span.textContent = getLabelValue(state);
+    span.textContent = state?.label?.value || '';
 
     button.appendChild(span);
     return button;
   };
 
-  render() {
-    this.element = this.renderField();
-    this.block.appendChild(this.element);
+  render(model) {
+    this.element = this.renderField(model);
     this.addListener();
-    //subscribe(this.model, this.element);
+    // subscribe(this.model, this.element);
+    return this.element;
   }
 }
 
 export default async function decorate(block, model) {
   const button = new Button(block, model);
-  button.render();
+  block.append(button.render(model));
+  return block;
 }
